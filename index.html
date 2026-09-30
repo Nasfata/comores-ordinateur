@@ -50,17 +50,34 @@ h1{font-family:Cinzel,serif;font-size:clamp(2.3rem,7.2vw,4rem);line-height:1.05;
 .order h2{font-family:Cinzel,serif;font-size:clamp(1.7rem,5vw,2.4rem);text-align:center;margin:0 0 8px}
 .order .hint{text-align:center;color:var(--mute);margin:0 0 30px}
 form{max-width:760px;margin:0 auto;padding:clamp(20px,4vw,38px);border-radius:28px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 40px 90px -40px rgba(8,4,60,.9)}
-.specs{display:grid;gap:22px 34px}
+.specs{display:grid;gap:26px 30px}
 @media(min-width:700px){.specs{grid-template-columns:1fr 1fr}}
+.wide{grid-column:1/-1}
 fieldset{border:0;padding:0;margin:0;min-width:0}
-legend{font-weight:600;margin-bottom:10px;padding:0;color:var(--gold1)}
-.opts{display:flex;flex-wrap:wrap;gap:8px}
-.opts label{position:relative}
-.opts input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0}
-.opts span{display:block;padding:10px 16px;border-radius:12px;border:1.5px solid var(--line);background:rgba(255,255,255,.06);transition:all .18s}
-.opts label:hover span{border-color:var(--gold2)}
-.opts input:checked+span{color:#3b2500;font-weight:600;border-color:var(--gold1);background:linear-gradient(180deg,var(--gold1),var(--gold2));box-shadow:0 8px 20px -8px var(--gold2)}
-.opts input:focus-visible+span{outline:3px solid #fff;outline-offset:2px}
+
+/* Options en cartes */
+.grp legend{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.02rem;color:var(--gold1);margin-bottom:12px;padding:0}
+.grp legend i{font-style:normal;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:rgba(255,225,120,.14);border:1px solid rgba(255,225,120,.4);font-size:1rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:10px}
+.card{position:relative;display:block}
+.card input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0}
+.face{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:60px;padding:12px 26px 12px 14px;border-radius:14px;border:1.5px solid var(--line);background:rgba(255,255,255,.06);transition:transform .18s,border-color .18s,background .18s,box-shadow .18s}
+.face b{font-weight:600;font-size:.98rem;line-height:1.2}
+.face small{color:var(--mute);font-size:.78rem;margin-top:2px;line-height:1.25}
+.card:hover .face{border-color:var(--gold2);transform:translateY(-2px)}
+.card input:checked+.face{background:linear-gradient(160deg,var(--gold1),var(--gold2) 65%,var(--gold3));border-color:var(--gold1);color:#3b2500;box-shadow:0 12px 26px -12px var(--gold2)}
+.card input:checked+.face small{color:#6b4a06}
+.card input:checked+.face::after{content:"✓";position:absolute;top:7px;right:8px;width:18px;height:18px;border-radius:50%;background:#3b2500;color:var(--gold1);font-size:.72rem;font-weight:800;display:grid;place-items:center}
+.card input:focus-visible+.face{outline:3px solid #fff;outline-offset:2px}
+
+/* Compteur de quantité */
+.step{display:inline-flex;align-items:center;gap:6px;padding:6px;border-radius:16px;border:1.5px solid var(--line);background:rgba(255,255,255,.06)}
+.step output{min-width:54px;text-align:center;font-size:1.4rem;font-weight:600;color:var(--gold1)}
+.step button{width:44px;height:44px;padding:0;display:grid;place-items:center;font-size:1.5rem;line-height:1;border-radius:12px;color:#3b2500;background:linear-gradient(180deg,var(--gold1),var(--gold2));box-shadow:none}
+.step button:hover{transform:none;filter:brightness(1.06)}
+.step button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+
+/* Nom, ville, résumé, bouton */
 .who{display:grid;gap:16px;margin-top:28px}
 @media(min-width:700px){.who{grid-template-columns:1fr 1fr}}
 .field b{display:block;font-weight:600;margin-bottom:6px;color:var(--gold1)}
@@ -141,34 +158,72 @@ footer{text-align:center;color:var(--mute);font-size:.92rem;padding:10px 0 44px}
 
 <script>
 // ====== À MODIFIER ======
-// Numéro WhatsApp avec indicatif, sans + ni espaces (ex. 2693123456)
+// Numéro WhatsApp avec indicatif, sans + ni espaces
 const NUMERO = "2693238628";
 const NOM_BOUTIQUE = "Comores Ordinateur";
 
 // Options proposées aux clients (ajoutez, retirez ou changez les choix)
+// "hint" = petite phrase d'aide sous le choix (facultative)
 const OPTIONS = [
-  { key: "marque",   label: "Marque",       choices: ["HP", "Dell", "Lenovo", "Asus", "Acer"], def: "HP" },
-  { key: "cpu",      label: "Processeur",   choices: ["Intel Core i3", "Intel Core i5", "Intel Core i7"], def: "Intel Core i5" },
-  { key: "ram",      label: "Mémoire RAM",  choices: ["8 Go", "16 Go", "32 Go"], def: "16 Go" },
-  { key: "stockage", label: "Stockage SSD", choices: ["256 Go", "512 Go", "1 To"], def: "512 Go" },
-  { key: "ecran",    label: "Écran",        choices: ["14 pouces", "15,6 pouces"], def: "14 pouces" },
-  { key: "clavier",  label: "Clavier",      choices: ["AZERTY", "QWERTY"], def: "AZERTY" },
-  { key: "quantite", label: "Quantité",     choices: ["1", "2", "3", "5"], def: "1" }
+  { key: "marque", icon: "🏷️", label: "Marque", def: "HP", wide: true, choices: [
+    { v: "HP" }, { v: "Dell" }, { v: "Lenovo" }, { v: "Asus" }, { v: "Acer" } ] },
+  { key: "cpu", icon: "⚙️", label: "Processeur", def: "Intel Core i5", choices: [
+    { v: "Intel Core i3", hint: "Usage simple" },
+    { v: "Intel Core i5", hint: "Polyvalent" },
+    { v: "Intel Core i7", hint: "Haute performance" } ] },
+  { key: "generation", icon: "⚡", label: "Génération", def: "10e génération", wide: true, choices: [
+    { v: "8e génération",  hint: "Économique" },
+    { v: "10e génération", hint: "Qualité / prix" },
+    { v: "11e génération", hint: "Rapide" },
+    { v: "12e génération", hint: "Très performant" } ] },
+  { key: "ram", icon: "🧠", label: "Mémoire RAM", def: "16 Go", choices: [
+    { v: "8 Go",  hint: "Bureautique" },
+    { v: "16 Go", hint: "Multitâche" },
+    { v: "32 Go", hint: "Usage pro" } ] },
+  { key: "stockage", icon: "💾", label: "Stockage SSD", def: "512 Go", choices: [
+    { v: "256 Go", hint: "Essentiel" },
+    { v: "512 Go", hint: "Confortable" },
+    { v: "1 To",   hint: "Grand espace" } ] },
+  { key: "ecran", icon: "🖥️", label: "Écran", def: "14 pouces", choices: [
+    { v: "14 pouces",   hint: "Léger, pratique" },
+    { v: "15,6 pouces", hint: "Grand confort" } ] },
+  { key: "clavier", icon: "⌨️", label: "Clavier", def: "AZERTY", choices: [
+    { v: "AZERTY", hint: "Français" },
+    { v: "QWERTY", hint: "Anglais" } ] },
+  { key: "quantite", icon: "📦", label: "Quantité", def: "1", type: "stepper", min: 1, max: 10 }
 ];
 // ========================
 
 // Construction du formulaire
-document.getElementById("specs").innerHTML = OPTIONS.map(o => `
-  <fieldset>
-    <legend>${o.label}</legend>
-    <div class="opts">
-      ${o.choices.map(c => `
-        <label>
-          <input type="radio" name="${o.key}" value="${c}" ${c === o.def ? "checked" : ""} required>
-          <span>${c}</span>
-        </label>`).join("")}
-    </div>
-  </fieldset>`).join("");
+document.getElementById("specs").innerHTML = OPTIONS.map(o => {
+  const body = o.type === "stepper"
+    ? `<div class="step">
+         <button type="button" data-d="-1" aria-label="Moins">−</button>
+         <output>${o.def}</output>
+         <button type="button" data-d="1" aria-label="Plus">+</button>
+         <input type="hidden" name="${o.key}" value="${o.def}">
+       </div>`
+    : `<div class="cards">${o.choices.map(c => `
+         <label class="card">
+           <input type="radio" name="${o.key}" value="${c.v}" ${c.v === o.def ? "checked" : ""} required>
+           <span class="face"><b>${c.v}</b>${c.hint ? `<small>${c.hint}</small>` : ""}</span>
+         </label>`).join("")}</div>`;
+  return `<fieldset class="grp${o.wide ? " wide" : ""}"><legend><i>${o.icon}</i>${o.label}</legend>${body}</fieldset>`;
+}).join("");
+
+// Compteur de quantité
+document.querySelectorAll(".step").forEach(st => {
+  const inp = st.querySelector("input"), out = st.querySelector("output");
+  const o = OPTIONS.find(x => x.key === inp.name);
+  st.addEventListener("click", e => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    const n = Math.min(o.max, Math.max(o.min, Number(inp.value) + Number(b.dataset.d)));
+    inp.value = n;
+    out.textContent = n;
+    inp.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+});
 
 // Résumé en direct
 const form = document.getElementById("form");
